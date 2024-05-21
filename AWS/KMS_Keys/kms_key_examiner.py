@@ -1,8 +1,22 @@
 import boto3
 from datetime import datetime, timezone
 
-def list_kms_key_grants():
-    kms_client = boto3.client('kms')
+def get_aws_credentials():
+    access_key = input("Enter AWS Access Key ID: ")
+    secret_key = input("Enter AWS Secret Access Key: ")
+    session_token = input("Enter AWS Session Token (if applicable, press Enter to skip): ")
+    region = input("Enter AWS Region (default: us-west-1): ") or 'us-west-1'
+
+    return access_key, secret_key, session_token, region
+
+def list_kms_key_grants(access_key, secret_key, session_token, region):
+    session = boto3.Session(
+        aws_access_key_id=access_key,
+        aws_secret_access_key=secret_key,
+        aws_session_token=session_token if session_token else None,
+        region_name=region
+    )
+    kms_client = session.client('kms')
     keys = kms_client.list_keys()['Keys']
     grants_data = []
 
@@ -35,7 +49,8 @@ def list_kms_key_grants():
     return grants_data
 
 def main():
-    grants_data = list_kms_key_grants()
+    access_key, secret_key, session_token, region = get_aws_credentials()
+    grants_data = list_kms_key_grants(access_key, secret_key, session_token, region)
     for grant in grants_data:
         print(f"KeyId: {grant['KeyId']}, GrantId: {grant['GrantId']}, GrantName: {grant['GrantName']}, "
               f"GranteePrincipal: {grant['GranteePrincipal']}, CreationDate: {grant['CreationDate']}, "

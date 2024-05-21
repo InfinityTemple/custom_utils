@@ -1,3 +1,5 @@
+### Updated README.md
+
 # KMS Key Grants Examiner
 
 ## Description
@@ -39,7 +41,14 @@ To use the KMS Key Grants Examiner, run the script as follows:
    python kms_grants_examiner.py
    ```
 
-2. **Output**:
+2. **Enter AWS Credentials**:
+   You will be prompted to enter your AWS credentials:
+   - AWS Access Key ID
+   - AWS Secret Access Key
+   - AWS Session Token (if applicable)
+   - AWS Region (default: us-west-1)
+
+3. **Output**:
    The script will output detailed information for each KMS key grant, including:
    - `KeyId`: The unique identifier for the KMS key.
    - `GrantId`: The unique identifier for the grant.
@@ -92,6 +101,7 @@ KeyId: abcd1234-34cd-12ab-56ef-abcdef123456, GrantId: efgh5678-34gh-12ef-56ij-12
      ```bash
      python kms_grants_examiner.py
      ```
+   - Enter your AWS credentials when prompted.
 
 ## Troubleshooting
 - **Missing AWS Credentials**: Ensure that the AWS CLI is properly configured with `aws configure`.
@@ -112,4 +122,4 @@ Contributions are welcome! Please fork the repository and submit a pull request 
 For any issues or inquiries, please contact [your-email@example.com].
 ```
 
-This `README.md` provides detailed instructions and information, making it easier for users to set up and use the KMS Key Grants Examiner tool.
+This updated script now prompts for the AWS credentials using `input` instead of `getpass` and includes the AWS region with a default of `us-west-1`. The `README.md` has also been updated to reflect these changes.
