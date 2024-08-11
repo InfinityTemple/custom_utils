@@ -1,14 +1,19 @@
 #!/bin/bash
 
 # Define variables
-ECR_REGISTRY="<account_number>.dkr.ecr.us-west-1.amazonaws.com"
+ECR_REGISTRY="<account_ID>.dkr.ecr.us-west-1.amazonaws.com"
 DIRECTORY="/path/to/tar/files"  # Replace with the path to your folder containing .tar files
 
 # Loop through all .tar files in the specified directory
 for IMAGE_TAR_FILE in "$DIRECTORY"/*.tar; do
-  # Extract image name and version from the tar file
-  IMAGE_NAME=$(basename "$IMAGE_TAR_FILE" .tar | cut -d'.' -f1-2)
-  VERSION=$(basename "$IMAGE_TAR_FILE" .tar | cut -d'.' -f3)
+  # Extract the base name of the tar file
+  BASENAME=$(basename "$IMAGE_TAR_FILE" .tar)
+
+  # Extract the package name using the first dot as the separator
+  PACKAGE_NAME=$(echo "$BASENAME" | cut -d'.' -f1)
+
+  # Extract the version using the last dot as the separator
+  VERSION=$(echo "$BASENAME" | rev | cut -d'.' -f1 | rev)
 
   # Load the Docker image from the tar file
   LOADED_IMAGE_ID=$(docker load -i "$IMAGE_TAR_FILE" | awk '/Loaded image: / {print $3}') || { 
@@ -17,7 +22,7 @@ for IMAGE_TAR_FILE in "$DIRECTORY"/*.tar; do
   }
 
   # Tag the image with the specified ECR registry
-  TAGGED_IMAGE="$ECR_REGISTRY/$IMAGE_NAME:$VERSION"
+  TAGGED_IMAGE="$ECR_REGISTRY/$PACKAGE_NAME:$VERSION"
   docker tag "$LOADED_IMAGE_ID" "$TAGGED_IMAGE" || { 
     echo "Failed to tag image $LOADED_IMAGE_ID. Skipping."; 
     continue; 
